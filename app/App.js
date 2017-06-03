@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import * as storageMethods from './utils/storageMethods';
 import * as dateMethods from './utils/dateMethods';
+import { mockPreviousMonthExpenses } from './utils/mockDataMethods';
+import AddExpenses from './components/AddExpenses';
 import styles from './styles';
+import CurrentMonthExpenses from './components/CurrentMonthExpenses';
+
 
 export default class App extends Component {
     static navigationOptions = {
@@ -12,12 +16,13 @@ export default class App extends Component {
     constructor (props) {
         super();
         this.state = {
-            budgetSet: undefined
+            budget: undefined
         }
     }
 
     async componentWillMount () {
         this.setState({
+            expenses: [],
             month: dateMethods.getMonth(),
             year: dateMethods.getYear()
         });
@@ -28,9 +33,19 @@ export default class App extends Component {
     render () {
         return (
             <View style={ styles.appContainer }>
-                <Text>
-                    Your budget is { this.state.budgetSet || 'not set' }!
-                </Text>
+                
+                <CurrentMonthExpenses
+                    budget={ this.state.budget || 0 }
+                    expenses={ this.state.expenses }
+                    month={ this.state.month }
+                    spent={ this.state.spent || 0 }
+                    year={ this.state.year }
+                />
+                <AddExpenses
+                    month={ this.state.month }
+                    updateCurrentMonthExpenses={ () => this._updateCurrentMonthExpenses() }
+                    year={ this.state.year }
+                />
             </View>
         )
     }
@@ -43,7 +58,7 @@ export default class App extends Component {
     }
 
     async _saveAndUpdateBudget (budget) {
-        await storageMethods.saveMonthlyBudget(this.state.month, this.state.year, budget);
+        await storageMethods.saveMonthlyBudget(this.state.month, this.state.year, parseInt(budget));
 
         this._updateBudget();
     }
@@ -51,13 +66,28 @@ export default class App extends Component {
     async _updateBudget () {
         let response = await storageMethods.checkCurrentMonthBudget();
 
-        if (response !== false) {
+        if (response) {
             this.setState({
-                budgetSet: response
+                budget: response.budget,
+                spent: response.spent
             });
+
+            this._updateCurrentMonthExpenses();
             return;
         }
 
         this._renderEnterBudgetComponent();
+    }
+
+    async _updateCurrentMonthExpenses () {
+        let responseObject = await storageMethods.getMonthObject(this.state.month, this.state.year);
+
+        if (responseObject) {
+            this.setState({
+                budget: responseObject.budget,
+                expenses: responseObject.expenses,
+                spent: responseObject.spent
+            });
+        }
     }
 }

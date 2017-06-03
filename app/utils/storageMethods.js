@@ -23,7 +23,12 @@ export const checkCurrentMonthBudget = async () => {
     return false;
   }
 
-  return response[year][month].budget;
+  let details = response[year][month];
+
+  return {
+    budget: details.budget,
+    spent: details.spent
+  }
 }
 
 export const saveMonthlyBudget = async (month, year, budget) => {
@@ -36,7 +41,8 @@ export const saveMonthlyBudget = async (month, year, budget) => {
   if (!response[year].hasOwnProperty(month)) {
       response[year][month] = {
         budget: undefined,
-        expenses: []
+        expenses: [],
+        spent: 0
       }
   }
 
@@ -45,6 +51,42 @@ export const saveMonthlyBudget = async (month, year, budget) => {
   await setAsyncStorage(response);
 
   return;
+}
+
+const getTotalSpentForMonth = (array) => {
+  let total = 0;
+
+  array.forEach((elem) => {
+    total += parseInt(elem.amount)
+  });
+
+  return total;
+}
+
+export const saveItemToBudget = async (month, year, expenseObject) => {
+  let response = await getAsyncStorage();
+
+  let newExpensesArray = [
+    ...response[year][month].expenses,
+    expenseObject
+  ];
+
+  let newTotal = getTotalSpentForMonth(newExpensesArray);
+
+  response[year][month].expenses = newExpensesArray;
+  response[year][month].spent = newTotal;
+
+  await setAsyncStorage(response);
+
+  return true;
+}
+
+export const getMonthObject = async (month, year) => {
+  let response = await getAsyncStorage();
+
+  if(response[year] && response[year][month]) {
+    return response[year][month];
+  }
 }
 
 export const resetAsyncStorage = () => {
