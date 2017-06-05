@@ -6,6 +6,7 @@ import { mockPreviousMonthExpenses } from './utils/mockDataMethods';
 import AddExpenses from './components/AddExpenses';
 import styles from './styles';
 import CurrentMonthExpenses from './components/CurrentMonthExpenses';
+import PreviousMonthsList from './components/PreviousMonthList';
 
 
 export default class App extends Component {
@@ -33,9 +34,8 @@ export default class App extends Component {
     render () {
         return (
             <View style={ styles.appContainer }>
-                
                 <CurrentMonthExpenses
-                    budget={ this.state.budget || 0 }
+                    budget={ this.state.budget || 0 }ty
                     expenses={ this.state.expenses }
                     month={ this.state.month }
                     spent={ this.state.spent || 0 }

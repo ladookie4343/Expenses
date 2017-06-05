@@ -24,7 +24,7 @@ class CurrentMonthExpenses extends Component {
                 rowHasChanged: (r1, r2) => r1 !== r2
             })
         }
-    }
+    }    
 
     render() {
         const dataSource = this.state.ds.cloneWithRows(this.props.expenses || []);

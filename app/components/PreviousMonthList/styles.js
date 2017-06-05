@@ -17,6 +17,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 30
   },
+  rowDataTouchableContainer: {
+    flex: 1,
+    height: 30
+  },
   rowMonth: {
     color: '#7D878D',
     flex: 1,
@@ -38,6 +42,10 @@ const styles = StyleSheet.create({
   sectionText: {
     color: '#7D878D',
     marginLeft: 10
+  },
+  textRow: {
+    flex: 1,
+    flexDirection: 'row'
   }
 });
 

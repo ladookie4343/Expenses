@@ -47,7 +47,7 @@ export default class EnterBudget extends Component {
     }
 
     _saveAndUpdateBudget () {
-        this.props.navigation.state.params.saveAndUpdateBudget(parseInt(this.state.budget));
+        this.props.saveAndUpdateBudget(parseInt(this.state.budget));
         this.props.navigation.goBack();
     }
 

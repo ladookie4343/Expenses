@@ -1,3 +1,3 @@
-import AddExpenses from './AddExpenses'
+import PreviousMonthList from './PreviousMonthList'
 
-export default AddExpenses;
+export default PreviousMonthList;

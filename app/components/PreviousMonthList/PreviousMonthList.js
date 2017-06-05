@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
-
-import {
-  ListView,
-  Text,
-  View
-} from 'react-native';
-
+import { ListView, Text, View, TouchableHighlight } from 'react-native';
 import styles from './styles';
 import * as dateMethods from '../../utils/dateMethods';
 import * as storageMethods from '../../utils/storageMethods';
 
 export default class PreviousMonthsList extends Component {
+    static navigationOptions = {
+        title: 'Previous Months Expenses'
+    }
+    
   constructor (props) {
     super (props);
 
@@ -39,7 +37,7 @@ export default class PreviousMonthsList extends Component {
         <ListView
           automaticallyAdjustContentInsets={ false }
           dataSource={ dataSource }
-          renderRow={ (rowData, sectionID, rowID) => this._renderRowData(rowData, rowID) }
+          renderRow={ (rowData, sectionId, rowId) => this._renderRowData(rowData, sectionId, rowId) }
           renderSectionHeader={ (sectionData, sectionID) => this._renderSectionHeader(sectionData, sectionID) }
           renderSeparator={ (sectionID, rowID) => this._renderRowSeparator(sectionID, rowID) }
         />
@@ -47,15 +45,21 @@ export default class PreviousMonthsList extends Component {
     )
   }
 
-  _renderRowData (rowData, rowID) {
+  _renderRowData (rowData, sectionId, rowId) {
     return (
       <View style={ styles.rowDataContainer }>
-        <Text style={ styles.rowMonth }>
-          { dateMethods.getMonthString(rowID) }
-        </Text>
-        <Text style={ styles.rowBudget }>
-          { rowData.budget }
-        </Text>
+        <TouchableHighlight
+          onPress={ () => this._renderSelectedMonth(rowData, sectionId, rowId) }
+          style={ styles.rowDataTouchableContainer }>
+          <View style={ styles.textRow }>
+            <Text style={ styles.rowMonth }>
+              { dateMethods.getMonthString(rowId) }
+            </Text>
+            <Text style={ styles.rowBudget }>
+              { rowData.budget }
+            </Text>
+          </View>
+        </TouchableHighlight>
       </View>
     )
   }
@@ -77,5 +81,15 @@ export default class PreviousMonthsList extends Component {
         </Text>
       </View>
     )
+  }
+
+  _renderSelectedMonth (rowData, sectionId, rowId) {
+      this.props.navigation.navigate('CurrentMonthExpenses', {
+            budget: rowData.budget,
+            expenses: rowData.expenses,
+            month: rowId,
+            spent: rowData.spent,
+            year: sectionId
+        });
   }
 }
